@@ -1,0 +1,160 @@
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  background: #1a2237;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 400;
+}
+
+p {
+  font-family: 'Hind', sans-serif;
+  font-weight: 400;
+  color: black;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+hr {
+  color: #bbb;
+  margin-right: 80px;
+  margin-left: 80px;
+}
+
+main {
+  text-align: center;
+}
+
+span {
+  font-family: 'Hind', sans-serif;
+}
+
+img {
+  margin: 30px auto 30px;
+  display: block;
+}
+
+footer {
+  margin-top: 30px;
+  text-align: center;
+}
+  footer > hr {
+    border: 0.3px solid #bbb;
+  }
+  footer > p {
+    color: #bbb;
+  }
+
+
+#content-layover {
+  width: 90%;
+  border-radius: 25px;
+  background: white;
+  display: block;
+  margin: 10px auto 50px;
+  box-shadow: 0px 0px 30px #000;
+}
+
+#project-title {
+  margin-top: 30px;
+  font-size: 3em;
+  text-align: center;
+  color: white;
+}
+#project-subtitle {
+  margin: 30px 0 40px;
+  font-size: 1.25em;
+  text-align: center;
+  color: white;
+}
+
+
+.show-nav-button {
+  position: fixed;
+  top: 25px;
+  left: 35px;
+  font-size: 25px;
+  color: white;
+  font-weight: 900;
+  transform: rotate(90deg);
+  z-index: 100;
+}
+#firstbar,
+#thirdbar {
+  transition: 0.5s;
+  display: inline-block;
+  z-index: 110;
+}
+.navVisible1 {
+  transition: 0.5s;
+  transform: translate(-5.5px) rotate(45deg);
+}
+.navVisible2 {
+  transition: 0.5s;
+  transform: translate(5.5px) rotate(-45deg);
+}
+
+#nav-container {
+  color: white;
+  position: fixed;
+  top: 80px;
+  background: #1a2237;
+  padding-top: 1000px;
+  margin-top: -1000px;
+  padding-bottom: 1000px;
+  border: 25px solid #1a2237;
+  z-index: 99;
+  box-shadow: 0px 0px 10px #000;
+}
+  #nav-container > a {
+    display: block;
+  }
+
+.site-link {
+  display: inline-block;
+  margin: 10px;
+  font-size: 16px;
+  font-weight: 200;
+  border: solid white 0.5px;
+  padding: 15px 20px 15px;
+  font-family: 'Hind', sans-serif;
+  background: white;
+  color: #1a2237;
+  transition: 0.2s;
+  text-align: center;
+}
+  .site-link:hover {
+    color: white;
+    background: #1a2237;
+    transition: 0.2s;
+  }
+
+.written-content {
+  margin-left: 20%;
+  margin-right: 20%;
+  text-align: justify;
+}
+@media only screen and (max-width: 550px) {
+  .written-content {
+    margin-left: 50px;
+    margin-right: 50px;
+  }
+}
+
+#link-to-maurice:hover {
+  text-decoration: underline;
+}

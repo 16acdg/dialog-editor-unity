@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dialog Editor Unity Plugin</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Hind:200,400,500&display=swap" rel="stylesheet">
+    <link href="./stylesheets/styles.css" rel="stylesheet" type="text/css">
+    <link rel="shortcut icon" href="images/favicon.png">
+  </head>
+  <body>
+    <header>
+      <h1 id="project-title">Dialog Editor Unity Plugin</h1>
+      <h2 id="project-subtitle">GUI Dialog Editor plugin developed for Unity to create character dialog trees.</h2>
+      <div class="show-nav-button" onclick="showNav()"><span id="firstbar">|</span><span id="secondbar">|</span><span id="thirdbar">|</span></div>
+      <div id="nav-container" style="left:-200px">
+        <a class="site-link" href="https://andrewgray.me#home">Home</a>
+        <a class="site-link" href="https://andrewgray.me/resume/AndrewGray.pdf">Resume</a>
+        <a class="site-link" href="https://andrewgray.me#projects">Projects</a>
+        <!-- <a class="site-link" href="https://andrewgray.me#experience">Experience</a> -->
+        <a class="site-link" href="https://andrewgray.me/readinglist.html">Reading List</a>
+        <a class="site-link" href="https://andrewgray.me?highlightContact=true">Contact</a>
+      </div>
+    </header>
+    <div id="content-layover">
+      <main style="padding-top:1px;">
+        <br/>
+        <h3><b>Custom Dialog Trees Made Easy</b></h3>
+        <br/>
+        <div class="written-content">
+          <p>Part of Unity's scripting API involves extending their EditorWindow class to create your own custom GUI windows that work as if they are part of the default Game Engine editor. A task I recently undertook for a videogame I'm building involved creating a dialog system. Most of the dialog system was very straightforward to implement, however creating a dialog tree for a character involved hardcoding an array of DialogNode objects, holding dialog prompts and user responses. Due to the large number of characters in my game, and to enable additional use for future projects, I elected to make a more scalable and user-friendly dialog tree creation tool. This involved developing a GUI that would display the dialog tree within the Unity editor. You can see a sample of the editor window below.</p>
+          <img src="images/editor-window.png" style="width:90%;">
+          <p>I elected to make this from scratch to practice using the Unity EditorWindow class to make my own editor windows, and to produce a simple, free-to-use alternative to similar plugins already on the Unity Asset Store. Sometime soon in the future I hope to release this plugin to the public through the Unity Asset Store.</p>
+        </div>
+      </main>
+      <footer>
+        <hr>
+        <p style="margin-top:25px;">Hosted on Github Pages</p>
+        <p>Inspired by <a href="https://jekyll-theme-minimal-resume.netlify.com/" id="link-to-maurice">Maurice's Jekyll theme</a></p>
+        <p style="padding-bottom:35px;">Last updated September 2019</p>
+      </footer>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script src="javascript/Animations.js" type="text/javascript"></script>
+  </body>
+</html>
