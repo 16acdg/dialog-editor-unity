@@ -5,4 +5,4 @@ Displays conversation prompts as nodes in a graph. Selecting a node response wil
 Almost done creating an easy way for the plugin to be added.
 
 ## Next Steps
-Next steps include persisting dialog graphs, allowing dialog responses to trigger events, and posting the project to the Unity Asset Store (free of charge!).
+Next steps include allowing dialog responses to trigger events and posting the project to the Unity Asset Store (free of charge!).
