@@ -5,13 +5,35 @@ using UnityEngine.UI;
 
 public class DialogManager : MonoBehaviour
 {
+    [Range(-1f, 1f)]
+    public float HighlightVerticalOffset = 0;
+    [Range(-1f, 1f)]
+    public float HighlightHorizontalOffset = 0;
+
     public static DialogManager Instance;
 
+    public bool TypewriterEffect = false;
+
+    [HideInInspector]
+    public float TypewriterSpeed;
+    
+    [HideInInspector]
     public Text DialogText;
+
+    [HideInInspector]
     public GameObject OneResponseOption;
+
+    [HideInInspector]
     public GameObject TwoResponseOptions;
+
+    [HideInInspector]
     public GameObject ThreeResponseOptions;
+
+    [HideInInspector]
     public GameObject Highlight;
+
+    [HideInInspector]
+    public GameObject DialogBackground;
 
     private DialogNode CurrentNode;
 
@@ -23,64 +45,87 @@ public class DialogManager : MonoBehaviour
     private Text responseThreeTwo;
     private Text responseThreeThree;
 
-    private readonly float[][] highlightVerticalPositions = new float[][] {
-        new float[] { -0.02f },
-        new float[] { 0.72f, -0.4f },
-        new float[] { 0.73f, -0.02f, -0.77f }
+    //private float[][] highlightVerticalPositions = new float[][] {
+    //    new float[] { -0.02f },
+    //    new float[] { 0.72f, -0.4f },
+    //    new float[] { 0.73f, -0.02f, -0.77f }
+    //};
+    private float[][] highlightVerticalPositions = new float[][] {
+        new float[] { 0 },
+        new float[] { 0,0 },
+        new float[] { 0,0,0 }
     };
 
     private int numResponses = 1;   // 1, 2, or 3
 
     private int currentSelection = 0;   // index of response that is currently highlighted
 
-    private bool canListenForResponse = false;  // true when a user can submit a dialog response, false when the initial dialog is displayed
+    private bool isListeningForResponse = false;  // true when a user can submit a dialog response, false when the dialog of an npc is being displayed
 
-    private bool endOfConversation = false; // ends the converation
+    private bool endOfConversation = false; // true when the conversation is about to end
 
-    private DialogNode[] DialogGraph;
+    private List<DialogNode> DialogGraph;
 
-    private GameObject Speaker;
+    private IConversable Speaker;   // Reference to the NPC the player is talking to
 
-    private bool isHidden = false;  // initialize to false so the HideDialogWindow call on start actually hides the window
-
+    private bool isWindowHidden = false;  // initialize to false so the HideDialogWindow call on start actually hides the window
+    
     private void Start()
     {
         Instance = this;    // save singleton reference
         // Get references to the Text objects for the responses
-        responseOneOne = OneResponseOption.transform.GetChild(0).gameObject.GetComponent<Text>();
-        responseTwoOne = TwoResponseOptions.transform.GetChild(0).gameObject.GetComponent<Text>();
-        responseTwoTwo = TwoResponseOptions.transform.GetChild(1).gameObject.GetComponent<Text>();
-        responseThreeOne = ThreeResponseOptions.transform.GetChild(0).gameObject.GetComponent<Text>();
-        responseThreeTwo = ThreeResponseOptions.transform.GetChild(1).gameObject.GetComponent<Text>();
-        responseThreeThree = ThreeResponseOptions.transform.GetChild(2).gameObject.GetComponent<Text>();
+        GameObject text11 = OneResponseOption.transform.GetChild(0).gameObject;
+        GameObject text21 = TwoResponseOptions.transform.GetChild(0).gameObject;
+        GameObject text22 = TwoResponseOptions.transform.GetChild(1).gameObject;
+        GameObject text31 = ThreeResponseOptions.transform.GetChild(0).gameObject;
+        GameObject text32 = ThreeResponseOptions.transform.GetChild(1).gameObject;
+        GameObject text33 = ThreeResponseOptions.transform.GetChild(2).gameObject;
+        responseOneOne = text11.GetComponent<Text>();
+        responseTwoOne = text21.GetComponent<Text>();
+        responseTwoTwo = text22.GetComponent<Text>();
+        responseThreeOne = text31.GetComponent<Text>();
+        responseThreeTwo = text32.GetComponent<Text>();
+        responseThreeThree = text33.GetComponent<Text>();
+        highlightVerticalPositions[0][0] = text11.transform.position.y + HighlightVerticalOffset;
+        highlightVerticalPositions[1][0] = text21.transform.position.y + HighlightVerticalOffset;
+        highlightVerticalPositions[1][1] = text22.transform.position.y + HighlightVerticalOffset;
+        highlightVerticalPositions[2][0] = text31.transform.position.y + HighlightVerticalOffset;
+        highlightVerticalPositions[2][1] = text32.transform.position.y + HighlightVerticalOffset;
+        highlightVerticalPositions[2][2] = text33.transform.position.y + HighlightVerticalOffset;
+        Vector3 initHighlightPos = Highlight.transform.position;
+        Highlight.transform.position = new Vector3(initHighlightPos.x + HighlightHorizontalOffset, initHighlightPos.y, initHighlightPos.z);
         HideDialogWindow();
     }
 
     private void Update()
     {
-        if (canListenForResponse)
+        if (!isWindowHidden)
         {
-            ListenForResponse();
+            if (isListeningForResponse)
+            {
+                ListenForResponse();
+            }
+            else
+            {
+                DisplayCharacterDialog();
+            }
         }
-        else
-        {
-            DisplayCharacterDialog();
-        }
-    } // end Update method
+    }
 
     /// <summary>
     /// Starts the conversation.
     /// </summary>
     /// <param name="Conversation">The dialog graph that will be interpreted.</param>
-    public void StartConversation(DialogNode[] Conversation, GameObject Character)
+    /// <param name="NPC">Reference to the NPC that the player is going to talk with.</param>
+    public void StartConversation(List<DialogNode> Conversation, IConversable NPC)
     {
-        this.Speaker = Character;
+        this.Speaker = NPC;
         this.DialogGraph = Conversation;
         UpdateDialog(this.DialogGraph[0]);
-        // reset conversation parameters
         currentSelection = 0;
         endOfConversation = false;
-        ShowDialogWindow();
+        isWindowHidden = false;
+        DialogBackground.SetActive(true);
     }
 
     /// <summary>
@@ -89,27 +134,39 @@ public class DialogManager : MonoBehaviour
     /// <param name="Dialog">Dialog.</param>
     public void UpdateDialog(DialogNode Dialog)
     {
-        canListenForResponse = false;
+        isListeningForResponse = false;
         CurrentNode = Dialog;
-        Highlight.SetActive(false);
+
+        // Hide the dialog reponses, show the dialog text for the character's dialog output
+        DialogText.gameObject.SetActive(true);
         OneResponseOption.SetActive(false);
         TwoResponseOptions.SetActive(false);
         ThreeResponseOptions.SetActive(false);
-        DialogText.gameObject.SetActive(true);
-        if (CurrentNode.responses != null)
-        {
-            numResponses = CurrentNode.responses.Count;
-        }
-        else
+        Highlight.SetActive(false);
+
+        if (CurrentNode.responses.Count == 0)
         {
             endOfConversation = true;
         }
-        DialogText.text = CurrentNode.sentence;
+        else
+        {
+            numResponses = CurrentNode.responses.Count;
+        }
+
+        if (TypewriterEffect)
+        {
+            DisplayTextWithTypewritterEffect(DialogText, CurrentNode.sentence);
+        }
+        else
+        {
+            DialogText.text = CurrentNode.sentence;
+        }
     }
 
+    // Navigate through dialog options with the arrow keys
+    // Select dialog option when enter key is pressed
     private void ListenForResponse()
     {
-        // Navigate through dialog options with the arrow keys
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
             currentSelection--;
@@ -130,7 +187,16 @@ public class DialogManager : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.Return))
         {
-            UpdateDialog(DialogGraph[CurrentNode.responses[currentSelection].nextSentence]);
+            // Proceed to the next dialog node, and invoke a function if this dialog path specifies it via the 
+            // selected DialogResponse instance's triggerFunctionName property.
+            // If triggerFunctionName is an empty string, no function will be invoked.
+            DialogResponse selectedResponse = CurrentNode.responses[currentSelection];
+            if (selectedResponse.triggerFunctionName != "")
+            {
+                // Invoke can only be called on a MonoBehaviour instance, so get the MonoBehaviour from the same instance of the IConversable instance 
+                (this.Speaker as MonoBehaviour).Invoke(selectedResponse.triggerFunctionName, 0);
+            }
+            UpdateDialog(DialogGraph[selectedResponse.nextSentence]);
         }
     } // end ListenForResponse method
 
@@ -139,44 +205,63 @@ public class DialogManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Return))
         {
-            if (endOfConversation)
+            // If presseing enter, the typewritter effect is enabled, and the sentence has not been finished, finish it
+            if (TypewriterEffect && indexInSentence < fullText.Length)
             {
-                HideDialogWindow();
+                indexInSentence = fullText.Length;
+                textElementRef.text = fullText;
             }
+            // Otherwise, show the response options for the dialog prompt
             else
             {
-                // reset selection to the min number of responses minus one
-                currentSelection = 0;
-                // Populate the response text fields
-                Highlight.SetActive(true);
-                canListenForResponse = true;
-                // Set the text for the responses
-                switch (numResponses)
+                if (endOfConversation)
                 {
-                    case 1:
-                        OneResponseOption.SetActive(true);
-                        TwoResponseOptions.SetActive(false);
-                        ThreeResponseOptions.SetActive(false);
-                        responseOneOne.text = CurrentNode.responses[0].response;
-                        break;
-                    case 2:
-                        OneResponseOption.SetActive(false);
-                        TwoResponseOptions.SetActive(true);
-                        ThreeResponseOptions.SetActive(false);
-                        responseTwoOne.text = CurrentNode.responses[0].response;
-                        responseTwoTwo.text = CurrentNode.responses[1].response;
-                        break;
-                    case 3:
-                        OneResponseOption.SetActive(false);
-                        TwoResponseOptions.SetActive(false);
-                        ThreeResponseOptions.SetActive(true);
-                        responseThreeOne.text = CurrentNode.responses[0].response;
-                        responseThreeTwo.text = CurrentNode.responses[1].response;
-                        responseThreeThree.text = CurrentNode.responses[2].response;
-                        break;
+                    HideDialogWindow();
                 }
-                UpdateHighlightPosition();
-                DialogText.gameObject.SetActive(false);
+                else
+                {
+                    // Set and show the reponses the user can submit for the dialog prompt
+                    switch (numResponses)
+                    {
+                        case 1:
+                            // If there is only one response and its string is empty,
+                            // this is an indication that no user response is necessary, 
+                            // so proceed immediately to the next dialog prompt.
+                            if (CurrentNode.responses[0].response == "")
+                            {
+                                UpdateDialog(DialogGraph[CurrentNode.responses[0].nextSentence]);
+                                return;
+                            }
+                            else
+                            {
+                                responseOneOne.text = CurrentNode.responses[0].response;
+                                OneResponseOption.SetActive(true);
+                                TwoResponseOptions.SetActive(false);
+                                ThreeResponseOptions.SetActive(false);
+                            }
+                            break;
+                        case 2:
+                            OneResponseOption.SetActive(false);
+                            TwoResponseOptions.SetActive(true);
+                            ThreeResponseOptions.SetActive(false);
+                            responseTwoOne.text = CurrentNode.responses[0].response;
+                            responseTwoTwo.text = CurrentNode.responses[1].response;
+                            break;
+                        case 3:
+                            OneResponseOption.SetActive(false);
+                            TwoResponseOptions.SetActive(false);
+                            ThreeResponseOptions.SetActive(true);
+                            responseThreeOne.text = CurrentNode.responses[0].response;
+                            responseThreeTwo.text = CurrentNode.responses[1].response;
+                            responseThreeThree.text = CurrentNode.responses[2].response;
+                            break;
+                    }
+                    Highlight.SetActive(true);
+                    DialogText.gameObject.SetActive(false);
+                    currentSelection = 0;
+                    isListeningForResponse = true;  // Changes central behaviour in the Update method
+                    UpdateHighlightPosition();
+                }
             }
         }
     } // end DisplayCharacterDialog method
@@ -184,49 +269,62 @@ public class DialogManager : MonoBehaviour
     // Moves the text response highlight to position next to the current selection
     private void UpdateHighlightPosition()
     {
-        Debug.Log("currentsel " + currentSelection);
-        Highlight.transform.localPosition = new Vector3(-1.92f, highlightVerticalPositions[numResponses - 1][currentSelection], -0.1f);
+        Vector3 initHighlightPos = Highlight.transform.position;
+        Highlight.transform.position = new Vector3(initHighlightPos.x, highlightVerticalPositions[numResponses - 1][currentSelection], initHighlightPos.z);
     }
 
     public void HideDialogWindow()
     {
-        if (!isHidden)
+        if (!isWindowHidden)
         {
-            transform.position -= new Vector3(0, 0, 100);
-            isHidden = true;
+            SetUIElementsActive(false);
+            isWindowHidden = true;
         }
     }
 
     public void ShowDialogWindow()
     {
-        if (isHidden)
+        if (isWindowHidden)
         {
-            transform.position += new Vector3(0, 0, 100);
-            isHidden = false;
+            SetUIElementsActive(true);
+            isWindowHidden = false;
         }
     }
 
-    /*
-     Sample dialog graph:
-     // Hardcoded Dialog Graph representening all possible dialog structures
-    private readonly DialogNode[] DialogGraph =
+    private void SetUIElementsActive(bool active)
     {
-        new DialogNode("", new string[]{
-                "",
-                "" },
-            new int[]{ 1, 1 }),
-        new DialogNode("", new string[]{
-                "",
-                "",
-                "" },
-            new int[]{ 2, 3, 4 }),
-        new DialogNode("", new string[]{
-                "" },
-            new int[]{ 5 }),
-        new DialogNode("", null, null),
-        new DialogNode("", null, null),
-        new DialogNode("", null, null)
-    };   
-     */
+        this.DialogText.gameObject.SetActive(active);
+        this.OneResponseOption.SetActive(active);
+        this.TwoResponseOptions.SetActive(active);
+        this.ThreeResponseOptions.SetActive(active);
+        this.Highlight.SetActive(active);
+        this.DialogBackground.SetActive(active);
+    }
+
+    // Stuff for the typewritter text effect:
+    private string fullText = "";
+
+    private string currentText = "";
+
+    private Text textElementRef;
+
+    private int indexInSentence = 0;
+
+    private void DisplayTextWithTypewritterEffect(Text textElement, string sentence)
+    {
+        this.fullText = sentence;
+        this.textElementRef = textElement;
+        StartCoroutine(TypewriterText());
+    }
+
+    private IEnumerator TypewriterText()
+    {
+        for (indexInSentence = 0; indexInSentence <= fullText.Length; indexInSentence++)
+        {
+            currentText = fullText.Substring(0, indexInSentence);
+            textElementRef.text = currentText;
+            yield return new WaitForSeconds(1 / TypewriterSpeed);
+        }
+    }
 
 } // end DialogManager class

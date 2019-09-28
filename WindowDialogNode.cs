@@ -1,11 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 /// <summary>
 /// Class to represent a dialog node in the dialog editor window. 
 /// Basically a GUI capsule for the DialodNode class.
 /// </summary>
+[Serializable]
 public class WindowDialogNode
 {
     /// <summary>
@@ -18,6 +20,7 @@ public class WindowDialogNode
     /// </summary>
     public static readonly float height = 50;
 
+    [SerializeField]
     private Vector2 _position;
     /// <summary>
     /// Gets or sets the position.
@@ -41,6 +44,7 @@ public class WindowDialogNode
     /// </summary>
     public DialogNode content;
 
+    [SerializeField]
     private Rect _rect;
     /// <summary>
     /// Gets or sets the rect.

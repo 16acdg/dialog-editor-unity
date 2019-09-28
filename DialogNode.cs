@@ -1,10 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 /// <summary>
 /// Class representing a node in a weightless, directed dialog graph
 /// </summary>
+[Serializable]
 public class DialogNode
 {
     /// <summary>

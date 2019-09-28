@@ -1,16 +1,23 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 /// <summary>
 /// Class representing a dialog response.
 /// </summary>
+[Serializable]
 public class DialogResponse
 {
     /// <summary>
     /// The acutal content of the response.
     /// </summary>
     public string response;
+
+    /// <summary>
+    /// The name of the function this response will trigger.
+    /// </summary>
+    public string triggerFunctionName = "";
 
     /// <summary>
     /// Index of the next dialog node to go to next if this response was selected
@@ -44,7 +51,7 @@ public class DialogResponse
     /// <returns>A <see cref="T:System.String"/> that represents the current <see cref="T:DialogResponse"/>.</returns>
     public override string ToString()
     {
-        return "Goes to " + this.nextSentence + ". Response: " + this.response + "\n";
+        return "Goes to " + this.nextSentence + ". Response: " + this.response + ". Invokes method " + this.triggerFunctionName + "\n";
     }
 
 } // end DialogResponse class
