@@ -70,18 +70,33 @@ footer {
 }
 
 #project-title {
-  margin-top: 30px;
+  margin: 30px auto 0;
   font-size: 3em;
   text-align: center;
   color: white;
+  width: 75%;
 }
 #project-subtitle {
-  margin: 30px 0 40px;
+  margin: 30px auto 40px;
   font-size: 1.25em;
   text-align: center;
   color: white;
+  width: 90%;
 }
 
+#repo-link-icon {
+  width: 50px;
+  background: none;
+  position: absolute;
+  top: 25px;
+  right: 25px;
+  transition: 0.15s;
+}
+
+  #repo-link-icon:hover {
+    transform: scale(1.1);
+    transition: 0.15s;
+  }
 
 .show-nav-button {
   position: fixed;
@@ -93,6 +108,9 @@ footer {
   transform: rotate(90deg);
   z-index: 100;
 }
+  .show-nav-button:hover {
+    cursor: pointer;
+  }
 #firstbar,
 #thirdbar {
   transition: 0.5s;
