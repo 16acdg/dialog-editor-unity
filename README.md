@@ -1,3 +1,5 @@
+![alt text](https://andrewgray.me/images/dialogeditor.png)
+
 # dialog-editor-unity
 Custom dialog GUI editor for the Unity game engine.
 Visually displays conversation as a series of nodes in a graph.
