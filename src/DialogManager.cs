@@ -5,35 +5,36 @@ using UnityEngine.UI;
 
 public class DialogManager : MonoBehaviour
 {
+    public static DialogManager Instance;
+
+    [Header("References to Dialog UI Elements")]
+
+    public Text DialogText;
+
+    public GameObject OneResponseOption;
+
+    public GameObject TwoResponseOptions;
+
+    public GameObject ThreeResponseOptions;
+
+    public GameObject Highlight;
+
+    public GameObject DialogBackground;
+
+
+    [Header("Dialog Settings")]
+
     [Range(-1f, 1f)]
     public float HighlightVerticalOffset = 0;
     [Range(-1f, 1f)]
     public float HighlightHorizontalOffset = 0;
 
-    public static DialogManager Instance;
-
     public bool TypewriterEffect = false;
 
     [HideInInspector]
     public float TypewriterSpeed;
-    
-    [HideInInspector]
-    public Text DialogText;
 
-    [HideInInspector]
-    public GameObject OneResponseOption;
-
-    [HideInInspector]
-    public GameObject TwoResponseOptions;
-
-    [HideInInspector]
-    public GameObject ThreeResponseOptions;
-
-    [HideInInspector]
-    public GameObject Highlight;
-
-    [HideInInspector]
-    public GameObject DialogBackground;
+    public string SavePath;
 
     private DialogNode CurrentNode;
 

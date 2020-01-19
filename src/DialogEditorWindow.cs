@@ -370,7 +370,10 @@ public class DialogEditorWindow : EditorWindow
     // Save the character dialog data to a json file
     private void OnDisable()
     {
-        this.selectedCharacter.SaveData();
+        if (this.selectedCharacter != null)
+        {
+            this.selectedCharacter.SaveData();
+        }
     }
 
 } // end DialogEditorWindow class

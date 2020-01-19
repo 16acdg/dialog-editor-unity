@@ -66,6 +66,11 @@ public class Conversation : MonoBehaviour
         (new DialogEditorWindow()).ShowWindowForCharacter(this);
     }
 
+    private void Awake()
+    {
+        LoadSavedDialog();
+    }
+
     /// <summary>
     /// Starts the conversation.
     /// </summary>
@@ -73,13 +78,14 @@ public class Conversation : MonoBehaviour
     {
         // Reference to the class that contains defitions for functions triggered by this conversation
         // In effect, this is the part of the NPCs behaviour.
-        IConversable npcRef = this.gameObject.GetComponentInParent(typeof(IConversable)) as IConversable; 
+        IConversable npcRef = this.gameObject.GetComponentInParent(typeof(IConversable)) as IConversable;
+        Debug.Log("Length: " + _graphGui.Count);
         DialogManager.Instance.StartConversation(this.Graph, npcRef);
     }
 
     public bool LoadSavedDialog()
     {
-        string path = "Assets/Resources/Conversations/" + id + ".json";
+        string path = EditorPrefs.GetString("DialogSavePath") + id + ".json";
         bool fileExists = File.Exists(path);
         if (fileExists)
         {
@@ -96,7 +102,7 @@ public class Conversation : MonoBehaviour
     /// </summary>
     public void SaveData()
     {
-        string path = "Assets/Resources/Conversations/" + id +".json";
+        string path = EditorPrefs.GetString("DialogSavePath") + id +".json";
         string data = JsonHelper.ToJson(_graphGui);
         StreamWriter writer = new StreamWriter(path, false);
         writer.WriteLine(data);

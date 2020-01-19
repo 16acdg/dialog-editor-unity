@@ -1,8 +1,7 @@
 # dialog-editor-unity
 Custom dialog GUI editor for the Unity game engine.
-Displays conversation prompts as nodes in a graph. Selecting a node response will take the user to a new conversation prompt.
+Visually displays conversation as a series of nodes in a graph.
 
-Almost done creating an easy way for the plugin to be added.
+Feel free to use this code in any of your projects. I will probably try to put it on the Unity Asset Store in the near future.
 
-## Next Steps
-Next steps include allowing dialog responses to trigger events and posting the project to the Unity Asset Store (free of charge!).
+Currently working on documentation of this project.
